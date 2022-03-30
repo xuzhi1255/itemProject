@@ -5,6 +5,9 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.item.bean.CommonReply;
 import com.item.bean.ItemRequest;
 import com.item.bean.ItemSearch;
@@ -135,10 +138,34 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/29 14:56
      */
     @Override
-    public CommonReply exportAllRecords(HttpServletResponse response,ItemSearch itemSearch) throws Exception {
+    public void exportAllRecords(HttpServletResponse response,ItemSearch itemSearch) throws Exception {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        String fileName = "Item" + System.currentTimeMillis() + ".xlsx";
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        // 这里 需要指定写用哪个class去写
+        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream(), Item.class).build();
+        int pageNumber = 1;
+        int pageSize = 10000;
+        int dataLength = pageSize;
+        List<Item> data = null;
+        while (dataLength == pageSize){
+            // 这里注意 如果同一个sheet只要创建一次
+            WriteSheet writeSheet = EasyExcel.writerSheet("Sheet"+pageNumber).build();
+            itemSearch.setPage(pageNumber - 1);
+            itemSearch.setLimit(pageSize);
+            data=itemMapper.findByAll(itemSearch);  //分页查询
+            excelWriter.write(data, writeSheet);
+            if(null == data || data.isEmpty()){
+                break;
+            }
+            dataLength = data.size();
+            pageNumber++;
+        }
+        excelWriter.finish();
 
-        return null;
     }
+
 
 
     private Item createItemModel(ItemRequest request) throws Exception {

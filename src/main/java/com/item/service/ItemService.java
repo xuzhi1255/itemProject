@@ -49,7 +49,7 @@ public interface ItemService {
      *@Author : Zhilin_Xu
      *@Date : 2022/3/29 14:56
     **/
-    CommonReply exportAllRecords(HttpServletResponse response,ItemSearch itemSearch) throws Exception;
+    void exportAllRecords(HttpServletResponse response,ItemSearch itemSearch) throws Exception;
 
 
 

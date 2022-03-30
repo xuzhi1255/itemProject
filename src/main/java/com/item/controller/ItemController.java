@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
@@ -97,13 +96,11 @@ public class ItemController {
      *@Author : Zhilin_Xu
      *@Date : 2022/3/29 11:42
     **/
-    @PostMapping(value ="exportAllRecords")
-    public CommonReply exportAllRecords(HttpServletRequest request,
-                                        HttpServletResponse response,@RequestBody  ItemSearch itemSearch) throws Exception {
+    @PostMapping(value ="/exportAllRecords")
+    public void exportAllRecords(
+            HttpServletResponse response,@RequestBody ItemSearch itemSearch) throws Exception {
         log.info("exportAllRecords input : {}", JSONUtil.toJsonStr(itemSearch));
-        CommonReply commonReply = itemService.exportAllRecords(response,itemSearch);
-        log.info("exportAllRecords onput : {}", JSONUtil.toJsonStr(commonReply));
-        return commonReply;
+        itemService.exportAllRecords(response,itemSearch);
     }
 
 
