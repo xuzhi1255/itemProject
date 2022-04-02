@@ -1,6 +1,9 @@
 package com.item.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @Description : 商品搜索类
@@ -34,24 +37,27 @@ public class ItemSearch {
     /**
      * 创建开始时间
      */
-
-    private String createStartTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createStartTime;
 
     /**
      * 创建结束时间
      */
-    private String createEndTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createEndTime;
 
 
     /**
      * 编辑开始时间
      */
-    private String editStartTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date editStartTime;
 
     /**
      * 编辑介绍时间
      */
-    private String editEndTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date editEndTime;
 
     /**
      * 编辑用户
@@ -61,11 +67,11 @@ public class ItemSearch {
     /**
      * 页数
      */
-    private Integer page;
+    private Integer page = 0;
     /**
      * 条数
      */
-    private Integer limit;
+    private Integer limit = 10;
 
 
 

@@ -30,7 +30,7 @@ public interface ItemService {
      *@Author : Zhilin_Xu
      *@Date : 2022/3/28 17:15
      **/
-    CommonReply updateItemById(ItemRequest itemRequest) throws Exception;
+    CommonReply updateItemById(ItemRequest itemRequest,Long id) throws Exception;
     /**
      *@Description : 根据id得到商品信息
      *@Author : Zhilin_Xu

@@ -17,6 +17,6 @@ public class CommonReply {
     private String msg;
 
     //返回数据
-    private String data;
+    private Object data;
 
 }

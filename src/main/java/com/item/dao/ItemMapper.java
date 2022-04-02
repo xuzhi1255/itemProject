@@ -23,6 +23,9 @@ public interface ItemMapper {
     int countByItemNumber(@Param("itemNumber")String itemNumber);
 
     List<Item> findByAll(ItemSearch itemSearch);
+    Long countByIdNotAndItemNumber(@Param("notId")Long notId,@Param("itemNumber")String itemNumber);
+
+
 
 
 

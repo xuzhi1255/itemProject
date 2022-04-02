@@ -1,10 +1,8 @@
 package com.item.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
@@ -18,7 +16,6 @@ import com.item.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -36,7 +33,6 @@ public class ItemServiceImpl implements ItemService {
     ItemMapper itemMapper;
 
     @Override
-    @Transactional
     public synchronized CommonReply addItem(ItemRequest itemRequest) throws Exception {
         //将请求的bean转换为entity
         Item itemModel = createItemModel(itemRequest);
@@ -59,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/28 17:15
      */
     @Override
-    @Transactional
     public CommonReply deleteItemById(Long id) throws Exception {
         //先查询商品是否存在
         Item item = itemMapper.selectByPrimaryKey(id);
@@ -77,17 +72,24 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/28 17:15
      */
     @Override
-    @Transactional
-    public CommonReply updateItemById(ItemRequest itemRequest) throws Exception {
+    public CommonReply updateItemById(ItemRequest itemRequest,Long id) throws Exception {
         //检查一些东西是否符合规范
-        if(ObjectUtil.isNull(itemRequest.getId())){
+        if(ObjectUtil.isNull(id)){
             throw new Exception("商品id没有传输");
         }
 
         //先查询商品是否存在
-        Item item = itemMapper.selectByPrimaryKey(itemRequest.getId());
+        Item item = itemMapper.selectByPrimaryKey(id);
         if(ObjectUtil.isNull(item)){
-            throw new Exception("id " + itemRequest.getId() +"不存在");
+            throw new Exception("id " + id +"不存在");
+        }
+        //如果请求更改itemNumber,检查itemNumber是否唯一
+        if(StrUtil.isNotBlank(itemRequest.getItemNumber())){
+            Long itemCount = itemMapper.countByIdNotAndItemNumber(id,itemRequest.getItemNumber());
+            if(itemCount > 0){
+                log.info("商品号码 {} 已经存在",itemRequest.getItemNumber());
+                throw new Exception("itemNumber" + itemRequest.getItemNumber()+"已经存在, 不能更新");
+            }
         }
         //将请求的bean转换为entity
         Item itemModel = createItemModel(itemRequest);
@@ -106,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommonReply getItemById(Long id) throws Exception {
         Item item = itemMapper.selectByPrimaryKey(id);
-        return CommonUtils.buildResp(200,"查询成功",JSONUtil.toJsonStr(item));
+        return CommonUtils.buildResp(200,"查询成功",item);
     }
 
     /**
@@ -117,18 +119,21 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public CommonReply searchAllItems(ItemSearch itemSearch) throws Exception {
-        //赋予page和limit默认值
-        if(ObjectUtil.isNull(itemSearch.getPage())){
-            itemSearch.setPage(0);
-        }else{
-            itemSearch.setPage(itemSearch.getPage() - 1);
+        //对页数和每页限制条数进行校验
+        if(ObjectUtil.isNotEmpty(itemSearch.getPage())){
+            if(itemSearch.getPage() < 1){
+                throw new Exception("请输入正确的页数");
+            }
         }
-        if(ObjectUtil.isNull(itemSearch.getLimit())){
-            itemSearch.setLimit(10);
+        if(ObjectUtil.isNotEmpty(itemSearch.getLimit())){
+            if(itemSearch.getLimit() <= 0){
+                throw new Exception("请输入正确的展示条数");
+            }
         }
+
         //得到所有符合条件记录
         List<Item> items =  itemMapper.findByAll(itemSearch);
-        return CommonUtils.buildResp(200,"查询成功",JSONUtil.toJsonStr(items));
+        return CommonUtils.buildResp(200,"查询成功",items);
     }
 
     /**
@@ -171,22 +176,6 @@ public class ItemServiceImpl implements ItemService {
     private Item createItemModel(ItemRequest request) throws Exception {
         Item item = new Item();
         BeanUtil.copyProperties(request,item);
-        if(StrUtil.isNotBlank(request.getCreateTime())){
-            try{
-                item.setCreateTime(DateUtil.parse(request.getCreateTime(),"yyyy-MM-dd HH:mm:ss"));
-            }catch (Exception e){
-                throw new Exception("createTime时间格式错误");
-            }
-
-        }
-        if(StrUtil.isNotBlank(request.getEditTime())){
-            try{
-                item.setEditTime(DateUtil.parse(request.getEditTime(),"yyyy-MM-dd HH:mm:ss"));
-            }catch (Exception e){
-                throw new Exception("editTime时间格式错误");
-            }
-
-        }
         return item;
     }
 

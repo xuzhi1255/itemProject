@@ -1,10 +1,11 @@
 package com.item.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import java.util.Date;
 
 
 /**
@@ -14,11 +15,6 @@ import javax.validation.constraints.Pattern;
  **/
 @Data
 public class ItemRequest {
-
-    /**
-     * itemId
-     */
-    private Long id;
 
     /**
      * 商品号码
@@ -40,18 +36,16 @@ public class ItemRequest {
     /**
      * 创建时间
      */
-    @NotBlank(message = "createTime不能为空")
-    @Pattern(regexp = "^(((20[0-3][0-9]-(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|(20[0-3][0-9]-(0[2469]|11)-(0[1-9]" +
-            "|[12][0-9]|30))) (20|21|22|23|[0-1][0-9]):[0-5][0-9]:[0-5][0-9])$",message = "createTime格式错误")
-    private String createTime;
+    @NotNull(message = "createTime不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
     /**
      * 编辑时间
      */
-    @NotBlank(message = "editTime不能为空")
-    @Pattern(regexp = "^(((20[0-3][0-9]-(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|(20[0-3][0-9]-(0[2469]|11)-(0[1-9]" +
-            "|[12][0-9]|30))) (20|21|22|23|[0-1][0-9]):[0-5][0-9]:[0-5][0-9])$",message = "editTime格式错误")
-    private String editTime;
+    @NotNull(message = "editTime不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date editTime;
 
     /**
      * 编辑用户
