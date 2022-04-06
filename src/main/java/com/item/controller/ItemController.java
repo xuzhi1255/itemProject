@@ -3,13 +3,17 @@ package com.item.controller;
 import com.item.bean.CommonReply;
 import com.item.bean.ItemRequest;
 import com.item.bean.ItemSearch;
+import com.item.enums.HttpStatusEnum;
+import com.item.model.Item;
 import com.item.service.ItemService;
+import com.item.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -29,8 +33,8 @@ public class ItemController {
     **/
     @PostMapping
     public CommonReply addItem(@RequestBody @Validated ItemRequest itemRequest) throws Exception {
-        CommonReply commonReply = itemService.addItem(itemRequest);
-        return commonReply;
+        itemService.addItem(itemRequest);
+        return CommonUtils.buildResp(HttpStatusEnum.SUCCESS.getCode(), "添加成功",null);
     }
 
     /**
@@ -40,8 +44,8 @@ public class ItemController {
     **/
     @DeleteMapping(value = "/{id}")
     public CommonReply removeById(@PathVariable("id") @NotNull(message = "id不能为空") Long id) throws Exception {
-        CommonReply commonReply = itemService.deleteItemById(id);
-        return commonReply;
+        itemService.deleteItemById(id);
+        return CommonUtils.buildResp(HttpStatusEnum.SUCCESS.getCode(), "删除成功",null);
     }
 
     /**
@@ -52,8 +56,8 @@ public class ItemController {
     @PutMapping(value = "/{id}")
     public CommonReply updateItemById(@PathVariable("id") @NotNull(message = "id不能为空") Long id ,
                                       @RequestBody ItemRequest itemRequest) throws Exception {
-        CommonReply commonReply = itemService.updateItemById(itemRequest,id);
-        return commonReply;
+        itemService.updateItemById(itemRequest,id);
+        return CommonUtils.buildResp(HttpStatusEnum.SUCCESS.getCode(), "修改成功",null);
     }
     /**
      *@Description : 根据id查询商品信息
@@ -62,8 +66,8 @@ public class ItemController {
     **/
     @GetMapping(value = "/{id}")
     public CommonReply getItemById(@PathVariable("id") Long id) throws Exception {
-        CommonReply commonReply = itemService.getItemById(id);
-        return commonReply;
+        Item item = itemService.getItemById(id);
+        return CommonUtils.buildResp(HttpStatusEnum.SUCCESS.getCode(), "查询成功",item);
     }
 
 
@@ -75,8 +79,8 @@ public class ItemController {
     **/
     @PostMapping(value = "/query")
     public CommonReply serachAllItems(@RequestBody ItemSearch itemSearch) throws Exception {
-        CommonReply commonReply = itemService.searchAllItems(itemSearch);
-        return commonReply;
+        List<Item> items = itemService.searchAllItems(itemSearch);
+        return CommonUtils.buildResp(HttpStatusEnum.SUCCESS.getCode(), "查询成功",items);
     }
 
     /**

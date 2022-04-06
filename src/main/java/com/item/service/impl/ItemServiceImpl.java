@@ -6,13 +6,11 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.item.bean.CommonReply;
 import com.item.bean.ItemRequest;
 import com.item.bean.ItemSearch;
 import com.item.dao.ItemMapper;
 import com.item.model.Item;
 import com.item.service.ItemService;
-import com.item.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
     ItemMapper itemMapper;
 
     @Override
-    public synchronized CommonReply addItem(ItemRequest itemRequest) throws Exception {
+    public synchronized void addItem(ItemRequest itemRequest) throws Exception {
         //将请求的bean转换为entity
         Item itemModel = createItemModel(itemRequest);
         //检查itemNumber是否重复
@@ -46,7 +44,6 @@ public class ItemServiceImpl implements ItemService {
         if(addCount != 1){
             throw new Exception("itemNumber" + itemModel.getItemNumber()+"添加失败");
         }
-        return CommonUtils.buildResp(200,"添加成功",null);
     }
 
     /**
@@ -55,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/28 17:15
      */
     @Override
-    public CommonReply deleteItemById(Long id) throws Exception {
+    public void deleteItemById(Long id) throws Exception {
         //先查询商品是否存在
         Item item = itemMapper.selectByPrimaryKey(id);
         if(ObjectUtil.isNull(item)){
@@ -63,7 +60,6 @@ public class ItemServiceImpl implements ItemService {
         }
         //再执行删除
         itemMapper.deleteByPrimaryKey(id);
-        return CommonUtils.buildResp(200,"删除成功",null);
     }
 
     /**
@@ -72,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/28 17:15
      */
     @Override
-    public CommonReply updateItemById(ItemRequest itemRequest,Long id) throws Exception {
+    public void updateItemById(ItemRequest itemRequest,Long id) throws Exception {
         //检查一些东西是否符合规范
         if(ObjectUtil.isNull(id)){
             throw new Exception("商品id没有传输");
@@ -95,7 +91,6 @@ public class ItemServiceImpl implements ItemService {
         Item itemModel = createItemModel(itemRequest);
         //再执行更新
         itemMapper.updateByPrimaryKeySelective(itemModel);
-        return CommonUtils.buildResp(200,"更新商品成功",null);
     }
 
 
@@ -106,9 +101,9 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/29 14:19
      */
     @Override
-    public CommonReply getItemById(Long id) throws Exception {
+    public Item getItemById(Long id) throws Exception {
         Item item = itemMapper.selectByPrimaryKey(id);
-        return CommonUtils.buildResp(200,"查询成功",item);
+        return item;
     }
 
     /**
@@ -118,22 +113,28 @@ public class ItemServiceImpl implements ItemService {
      * @Date : 2022/3/29 14:27
      */
     @Override
-    public CommonReply searchAllItems(ItemSearch itemSearch) throws Exception {
+    public List<Item> searchAllItems(ItemSearch itemSearch) throws Exception {
         //对页数和每页限制条数进行校验
         if(ObjectUtil.isNotEmpty(itemSearch.getPage())){
             if(itemSearch.getPage() < 1){
-                throw new Exception("请输入正确的页数");
-            }
-        }
-        if(ObjectUtil.isNotEmpty(itemSearch.getLimit())){
-            if(itemSearch.getLimit() <= 0){
-                throw new Exception("请输入正确的展示条数");
+                itemSearch.setPage(0);
+            }else{
+                itemSearch.setPage(itemSearch.getPage() - 1);
             }
         }
 
+        if(ObjectUtil.isNotEmpty(itemSearch.getLimit())){
+            if(itemSearch.getLimit() <= 0){
+                itemSearch.setLimit(10);
+            }
+        }
+        //拼接description防止SQL注入
+        if(StrUtil.isNotBlank(itemSearch.getDescription())){
+            itemSearch.setDescription("%"+itemSearch.getDescription()+"%");
+        }
         //得到所有符合条件记录
         List<Item> items =  itemMapper.findByAll(itemSearch);
-        return CommonUtils.buildResp(200,"查询成功",items);
+        return items;
     }
 
     /**

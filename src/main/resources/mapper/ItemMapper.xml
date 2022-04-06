@@ -144,7 +144,7 @@
         and ItemNumber=#{itemNumber,jdbcType=VARCHAR}
       </if>
       <if test="description != null  and description != ''">
-        and Description like concat(concat('%',#{description,jdbcType=VARCHAR}),'%')
+        and Description like #{description,jdbcType=VARCHAR}
       </if>
       <if test="status != null">
         and `Status`=#{status,jdbcType=TINYINT}

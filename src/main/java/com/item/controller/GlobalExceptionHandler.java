@@ -1,6 +1,7 @@
 package com.item.controller;
 
 import com.item.bean.CommonReply;
+import com.item.enums.HttpStatusEnum;
 import com.item.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -42,12 +43,12 @@ public class GlobalExceptionHandler {
             }
             errorMsg = new StringBuilder(errorMsg.substring(0, errorMsg.length() - 1));
         }
-        return CommonUtils.buildResp(400,"必要参数未填，"+errorMsg.toString(),null);
+        return CommonUtils.buildResp(HttpStatusEnum.BAD_REQUEST.getCode(), "必要参数未填，"+errorMsg,null);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public CommonReply constraintViolationExceptionHandler(ConstraintViolationException exception){
-        return CommonUtils.buildResp(400,"必要参数未填，"+exception.getMessage(),null);
+        return CommonUtils.buildResp(HttpStatusEnum.BAD_REQUEST.getCode(),"必要参数未填，"+exception.getMessage(),null);
     }
 
     /**
@@ -56,7 +57,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value =Exception.class)
     public CommonReply exceptionHandler(Exception e){
         log.error("未知异常！原因是:",e);
-        return CommonUtils.buildResp(400,"后端操作失败  "+e.getMessage(),null);
+        return CommonUtils.buildResp(HttpStatusEnum.REQUEST_FAIL.getCode(),"后端操作失败  "+e.getMessage(),null);
     }
 }
 
