@@ -1,4 +1,5 @@
 package com.item.aop;
+
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -19,8 +20,6 @@ import java.util.Arrays;
  **/
 
 
-
-
 @Aspect
 @Component
 @Slf4j
@@ -33,24 +32,24 @@ public class LogFilter {
     }
 
     @Before("Pointcut()")
-    public void before(JoinPoint joinPoint){
+    public void before(JoinPoint joinPoint) {
         Object args[] = joinPoint.getArgs();
-        MethodSignature sig = (MethodSignature)joinPoint.getSignature();
+        MethodSignature sig = (MethodSignature) joinPoint.getSignature();
         Method method = sig.getMethod();
-        if(null != method.getDeclaringClass().getName() && null != method.getName() && null != args && args.length > 0){
-            log.info("{} . {} : 请求参数：{}",method.getDeclaringClass().getName(),method.getName(), Arrays.toString(args));
+        if (null != method.getDeclaringClass().getName() && null != method.getName() && null != args && args.length > 0) {
+            log.info("{} . {} : 请求参数：{}", method.getDeclaringClass().getName(), method.getName(), Arrays.toString(args));
         }
     }
 
-    @AfterReturning(value="Pointcut()",returning="rvt")
-    public void after(JoinPoint joinPoint,Object rvt){
-        MethodSignature sig1 = (MethodSignature)joinPoint.getSignature();
+    @AfterReturning(value = "Pointcut()", returning = "rvt")
+    public void after(JoinPoint joinPoint, Object rvt) {
+        MethodSignature sig1 = (MethodSignature) joinPoint.getSignature();
         Method method1 = sig1.getMethod();
-        if(null != rvt && null != method1.getDeclaringClass()){
-            try{
-                log.info("{} . {} : 返回数据：{}",method1.getDeclaringClass().getName(),method1.getName(),
+        if (null != rvt && null != method1.getDeclaringClass()) {
+            try {
+                log.info("{} . {} : 返回数据：{}", method1.getDeclaringClass().getName(), method1.getName(),
                         JSONUtil.toJsonStr(rvt));
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }

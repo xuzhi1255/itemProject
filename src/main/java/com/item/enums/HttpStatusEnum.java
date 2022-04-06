@@ -11,11 +11,11 @@ public enum HttpStatusEnum {
     /**
      * 返回码说明
      */
-   SUCCESS(HttpStatus.HTTP_OK),
-   BAD_REQUEST(HttpStatus.HTTP_BAD_REQUEST),
-   REQUEST_FAIL(HttpStatus.HTTP_INTERNAL_ERROR);
+    SUCCESS(HttpStatus.HTTP_OK),
+    BAD_REQUEST(HttpStatus.HTTP_BAD_REQUEST),
+    REQUEST_FAIL(HttpStatus.HTTP_INTERNAL_ERROR);
 
-    private final  int code;
+    private final int code;
 
     HttpStatusEnum(int code) {
         this.code = code;
