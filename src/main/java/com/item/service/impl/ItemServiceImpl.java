@@ -145,6 +145,10 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public void exportAllRecords(HttpServletResponse response,ItemSearch itemSearch) throws Exception {
+        //拼接description防止SQL注入
+        if(StrUtil.isNotBlank(itemSearch.getDescription())){
+            itemSearch.setDescription("%"+itemSearch.getDescription()+"%");
+        }
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         String fileName = "Item" + System.currentTimeMillis() + ".xlsx";
