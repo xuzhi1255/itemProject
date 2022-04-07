@@ -10,11 +10,11 @@ import com.item.bean.CommonReply;
  **/
 public class CommonUtils {
 
-    public static CommonReply buildResp(int code, String msg, Object data){
+    public static CommonReply buildResp(int code, String msg, Object data) {
         CommonReply commonReply = new CommonReply();
         commonReply.setCode(code);
         commonReply.setMsg(msg);
-        if(ObjectUtil.isNotEmpty(data)){
+        if (ObjectUtil.isNotEmpty(data)) {
             commonReply.setData(data);
         }
         return commonReply;

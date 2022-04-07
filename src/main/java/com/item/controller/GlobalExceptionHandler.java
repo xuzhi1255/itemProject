@@ -27,10 +27,10 @@ public class GlobalExceptionHandler {
      * 必要参数检验失败异常
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public CommonReply validationBodyException(MethodArgumentNotValidException exception){
+    public CommonReply validationBodyException(MethodArgumentNotValidException exception) {
         BindingResult result = exception.getBindingResult();
         StringBuilder errorMsg = new StringBuilder();
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             List<ObjectError> errors = result.getAllErrors();
             for (ObjectError objectError : errors) {
                 FieldError fieldError = (FieldError) objectError;
@@ -43,21 +43,21 @@ public class GlobalExceptionHandler {
             }
             errorMsg = new StringBuilder(errorMsg.substring(0, errorMsg.length() - 1));
         }
-        return CommonUtils.buildResp(HttpStatusEnum.BAD_REQUEST.getCode(), "必要参数未填，"+errorMsg,null);
+        return CommonUtils.buildResp(HttpStatusEnum.BAD_REQUEST.getCode(), "必要参数未填，" + errorMsg, null);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public CommonReply constraintViolationExceptionHandler(ConstraintViolationException exception){
-        return CommonUtils.buildResp(HttpStatusEnum.BAD_REQUEST.getCode(),"必要参数未填，"+exception.getMessage(),null);
+    public CommonReply constraintViolationExceptionHandler(ConstraintViolationException exception) {
+        return CommonUtils.buildResp(HttpStatusEnum.BAD_REQUEST.getCode(), "必要参数未填，" + exception.getMessage(), null);
     }
 
     /**
      * 处理其他异常
      */
-    @ExceptionHandler(value =Exception.class)
-    public CommonReply exceptionHandler(Exception e){
-        log.error("未知异常！原因是:",e);
-        return CommonUtils.buildResp(HttpStatusEnum.REQUEST_FAIL.getCode(),"后端操作失败  "+e.getMessage(),null);
+    @ExceptionHandler(value = Exception.class)
+    public CommonReply exceptionHandler(Exception e) {
+        log.error("未知异常！原因是:", e);
+        return CommonUtils.buildResp(HttpStatusEnum.REQUEST_FAIL.getCode(), "后端操作失败  " + e.getMessage(), null);
     }
 }
 

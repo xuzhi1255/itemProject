@@ -74,5 +74,4 @@ public class ItemSearch {
     private Integer limit = 10;
 
 
-
 }

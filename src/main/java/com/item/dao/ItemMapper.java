@@ -1,4 +1,5 @@
 package com.item.dao;
+
 import com.item.bean.ItemSearch;
 import com.item.model.Item;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,18 +21,11 @@ public interface ItemMapper {
 
     int updateByPrimaryKey(Item record);
 
-    int countByItemNumber(@Param("itemNumber")String itemNumber);
+    int countByItemNumber(@Param("itemNumber") String itemNumber);
 
     List<Item> findByAll(ItemSearch itemSearch);
-    Long countByIdNotAndItemNumber(@Param("notId")Long notId,@Param("itemNumber")String itemNumber);
 
-
-
-
-
-
-
-
+    Long countByIdNotAndItemNumber(@Param("notId") Long notId, @Param("itemNumber") String itemNumber);
 
 
 }
