@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.item.dao.PoTransactionMapper">
+  <resultMap id="BaseResultMap" type="com.item.model.PoTransaction">
+    <!--@mbg.generated-->
+    <!--@Table potransaction-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="PoNumber" jdbcType="VARCHAR" property="poNumber" />
+    <result column="ItemNumber" jdbcType="VARCHAR" property="itemNumber" />
+    <result column="Quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="cost" jdbcType="DECIMAL" property="cost" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, PoNumber, ItemNumber, Quantity, cost
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from potransaction
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from potransaction
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.item.model.PoTransaction" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into potransaction (PoNumber, ItemNumber, Quantity, 
+      cost)
+    values (#{poNumber,jdbcType=VARCHAR}, #{itemNumber,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, 
+      #{cost,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.item.model.PoTransaction" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into potransaction
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="poNumber != null">
+        PoNumber,
+      </if>
+      <if test="itemNumber != null">
+        ItemNumber,
+      </if>
+      <if test="quantity != null">
+        Quantity,
+      </if>
+      <if test="cost != null">
+        cost,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="poNumber != null">
+        #{poNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNumber != null">
+        #{itemNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="cost != null">
+        #{cost,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.item.model.PoTransaction">
+    <!--@mbg.generated-->
+    update potransaction
+    <set>
+      <if test="poNumber != null">
+        PoNumber = #{poNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNumber != null">
+        ItemNumber = #{itemNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        Quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="cost != null">
+        cost = #{cost,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.item.model.PoTransaction">
+    <!--@mbg.generated-->
+    update potransaction
+    set PoNumber = #{poNumber,jdbcType=VARCHAR},
+      ItemNumber = #{itemNumber,jdbcType=VARCHAR},
+      Quantity = #{quantity,jdbcType=INTEGER},
+      cost = #{cost,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

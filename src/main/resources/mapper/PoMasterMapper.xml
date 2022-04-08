@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.item.dao.PoMasterMapper">
+  <resultMap id="BaseResultMap" type="com.item.model.PoMaster">
+    <!--@mbg.generated-->
+    <!--@Table pomaster-->
+    <id column="Id" jdbcType="BIGINT" property="id" />
+    <result column="PoNumber" jdbcType="VARCHAR" property="poNumber" />
+    <result column="CreateTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="EditTime" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="EditUser" jdbcType="VARCHAR" property="editUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    Id, PoNumber, CreateTime, EditTime, EditUser
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from pomaster
+    where Id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from pomaster
+    where Id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="Id" keyProperty="id" parameterType="com.item.model.PoMaster" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into pomaster (PoNumber, CreateTime, EditTime, 
+      EditUser)
+    values (#{poNumber,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP}, 
+      #{editUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="Id" keyProperty="id" parameterType="com.item.model.PoMaster" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into pomaster
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="poNumber != null">
+        PoNumber,
+      </if>
+      <if test="createTime != null">
+        CreateTime,
+      </if>
+      <if test="editTime != null">
+        EditTime,
+      </if>
+      <if test="editUser != null">
+        EditUser,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="poNumber != null">
+        #{poNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editUser != null">
+        #{editUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.item.model.PoMaster">
+    <!--@mbg.generated-->
+    update pomaster
+    <set>
+      <if test="poNumber != null">
+        PoNumber = #{poNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        EditTime = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editUser != null">
+        EditUser = #{editUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.item.model.PoMaster">
+    <!--@mbg.generated-->
+    update pomaster
+    set PoNumber = #{poNumber,jdbcType=VARCHAR},
+      CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      EditTime = #{editTime,jdbcType=TIMESTAMP},
+      EditUser = #{editUser,jdbcType=VARCHAR}
+    where Id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.item.dao.InventoryTransactionMapper">
+  <resultMap id="BaseResultMap" type="com.item.model.InventoryTransaction">
+    <!--@mbg.generated-->
+    <!--@Table inventorytransaction-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ItemNumber" jdbcType="VARCHAR" property="itemNumber" />
+    <result column="Quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="CreateTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="EditTIme" jdbcType="TIMESTAMP" property="editTIme" />
+    <result column="EditUser" jdbcType="VARCHAR" property="editUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, ItemNumber, Quantity, CreateTime, EditTIme, EditUser
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from inventorytransaction
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from inventorytransaction
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.item.model.InventoryTransaction" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into inventorytransaction (ItemNumber, Quantity, CreateTime, 
+      EditTIme, EditUser)
+    values (#{itemNumber,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{editTIme,jdbcType=TIMESTAMP}, #{editUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.item.model.InventoryTransaction" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into inventorytransaction
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemNumber != null">
+        ItemNumber,
+      </if>
+      <if test="quantity != null">
+        Quantity,
+      </if>
+      <if test="createTime != null">
+        CreateTime,
+      </if>
+      <if test="editTIme != null">
+        EditTIme,
+      </if>
+      <if test="editUser != null">
+        EditUser,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemNumber != null">
+        #{itemNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTIme != null">
+        #{editTIme,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editUser != null">
+        #{editUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.item.model.InventoryTransaction">
+    <!--@mbg.generated-->
+    update inventorytransaction
+    <set>
+      <if test="itemNumber != null">
+        ItemNumber = #{itemNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        Quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTIme != null">
+        EditTIme = #{editTIme,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editUser != null">
+        EditUser = #{editUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.item.model.InventoryTransaction">
+    <!--@mbg.generated-->
+    update inventorytransaction
+    set ItemNumber = #{itemNumber,jdbcType=VARCHAR},
+      Quantity = #{quantity,jdbcType=INTEGER},
+      CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      EditTIme = #{editTIme,jdbcType=TIMESTAMP},
+      EditUser = #{editUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
