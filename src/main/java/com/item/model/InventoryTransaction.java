@@ -1,7 +1,8 @@
 package com.item.model;
 
-import java.util.Date;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 库存表
@@ -9,7 +10,7 @@ import lombok.Data;
 @Data
 public class InventoryTransaction {
     /**
-     * itemId
+     * Id主键
      */
     private Long id;
 

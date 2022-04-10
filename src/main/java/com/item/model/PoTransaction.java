@@ -2,6 +2,8 @@ package com.item.model;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class PoTransaction {
     private Long id;
@@ -24,5 +26,5 @@ public class PoTransaction {
     /**
      * 采购成本单价
      */
-    private Long cost;
+    private BigDecimal cost;
 }

@@ -3,7 +3,9 @@ package com.item.bean;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -30,5 +32,7 @@ public class ProductOrder {
     private String editUser;
 
     //商品信息
+    @Valid
+    @NotEmpty(message = "商品信息不能为空")
     private List<ItemInfo> itemInfos;
 }
