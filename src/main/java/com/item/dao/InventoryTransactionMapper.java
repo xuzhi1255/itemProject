@@ -1,4 +1,5 @@
 package com.item.dao;
+import org.apache.ibatis.annotations.Param;
 
 import com.item.model.InventoryTransaction;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,4 +17,10 @@ public interface InventoryTransactionMapper {
     int updateByPrimaryKeySelective(InventoryTransaction record);
 
     int updateByPrimaryKey(InventoryTransaction record);
+
+    InventoryTransaction selectOneByItemNumber(@Param("itemNumber")String itemNumber);
+
+
+
+
 }

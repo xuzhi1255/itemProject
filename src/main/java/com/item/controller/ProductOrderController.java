@@ -2,6 +2,10 @@ package com.item.controller;
 
 import com.item.bean.CommonReply;
 import com.item.bean.ProductOrder;
+import com.item.enums.HttpStatusEnum;
+import com.item.service.ProductOrderService;
+import com.item.util.CommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/po")
 public class ProductOrderController {
 
+    @Autowired
+    ProductOrderService productOrderService;
+
     /**
      * @Description : TODO
      * @Author : Zhilin_Xu
@@ -25,9 +32,9 @@ public class ProductOrderController {
      **/
     @PostMapping("/receving")
     @ResponseBody
-    public CommonReply receviePo(@RequestBody @Validated ProductOrder productOrder) {
-        
-        return null;
+    public CommonReply receviePo(@RequestBody @Validated ProductOrder productOrder) throws Exception {
+        String msg = productOrderService.receviePo(productOrder);
+        return CommonUtils.buildResp(HttpStatusEnum.SUCCESS.getCode(), msg, null);
     }
 
 }
