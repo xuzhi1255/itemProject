@@ -73,5 +73,10 @@ public class ItemSearch {
      */
     private Integer limit = 10;
 
+    /**
+     * 偏移量
+     */
+    private Integer offset = 0;
+
 
 }

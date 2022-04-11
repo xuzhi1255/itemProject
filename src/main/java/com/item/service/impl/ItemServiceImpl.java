@@ -127,9 +127,9 @@ public class ItemServiceImpl implements ItemService {
 
         if (ObjectUtil.isNotEmpty(itemSearch.getPage())) {
             if (itemSearch.getPage() < 1) {
-                itemSearch.setPage(0);
+                itemSearch.setOffset(0);
             } else {
-                itemSearch.setPage((itemSearch.getPage() - 1) * limit);
+                itemSearch.setOffset((itemSearch.getPage() - 1) * limit);
             }
         }
 
@@ -160,7 +160,7 @@ public class ItemServiceImpl implements ItemService {
         while (dataLength == pageSize) {
             // 这里注意 如果同一个sheet只要创建一次
             WriteSheet writeSheet = EasyExcel.writerSheet("Sheet" + pageNumber).build();
-            itemSearch.setPage(pageNumber - 1);
+            itemSearch.setOffset((pageNumber - 1) * pageSize);
             itemSearch.setLimit(pageSize);
             data = itemMapper.findByAll(itemSearch);  //分页查询
             excelWriter.write(data, writeSheet);

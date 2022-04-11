@@ -166,8 +166,8 @@
                 and editUser = #{editUser,jdbcType=VARCHAR}
             </if>
             order by EditTime desc
-            <if test="page != null and limit != null">
-                limit #{page,jdbcType=INTEGER}, #{limit,jdbcType=INTEGER}
+            <if test="offset != null and limit != null">
+                limit #{offset,jdbcType=INTEGER}, #{limit,jdbcType=INTEGER}
             </if>
         </where>
     </select>
