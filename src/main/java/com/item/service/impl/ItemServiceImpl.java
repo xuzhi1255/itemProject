@@ -116,19 +116,24 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> searchAllItems(ItemSearch itemSearch) throws Exception {
         //对页数和每页限制条数进行校验
+        Integer limit = 10;
+        if (ObjectUtil.isNotEmpty(itemSearch.getLimit())) {
+            if (itemSearch.getLimit() <= 0) {
+                itemSearch.setLimit(limit);
+            } else {
+                limit = itemSearch.getLimit();
+            }
+        }
+
         if (ObjectUtil.isNotEmpty(itemSearch.getPage())) {
             if (itemSearch.getPage() < 1) {
                 itemSearch.setPage(0);
             } else {
-                itemSearch.setPage(itemSearch.getPage() - 1);
+                itemSearch.setPage((itemSearch.getPage() - 1) * limit);
             }
         }
 
-        if (ObjectUtil.isNotEmpty(itemSearch.getLimit())) {
-            if (itemSearch.getLimit() <= 0) {
-                itemSearch.setLimit(10);
-            }
-        }
+
         //得到所有符合条件记录
         List<Item> items = itemMapper.findByAll(itemSearch);
         return items;
