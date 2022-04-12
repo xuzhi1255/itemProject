@@ -67,7 +67,7 @@ public class ItemSearch {
     /**
      * 页数
      */
-    private Integer page = 0;
+    private Integer page = 1;
     /**
      * 条数
      */
