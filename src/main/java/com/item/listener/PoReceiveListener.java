@@ -2,7 +2,7 @@ package com.item.listener;
 
 import cn.hutool.json.JSONUtil;
 import com.item.message.PoReceiveMessage;
-import com.item.service.ProductOrderService;
+import com.item.service.PurchaseOrderService;
 import com.item.util.RedisUtil;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -25,23 +25,21 @@ import java.io.IOException;
 public class PoReceiveListener {
 
     @Autowired
-    ProductOrderService productOrderService;
+    PurchaseOrderService productOrderService;
 
     @Autowired
     RedisUtil redisUtil;
 
     @RabbitListener(queuesToDeclare = @Queue(value = "PO_RECEIVE_QUEUE"))
     @RabbitHandler
-    public synchronized void process(Channel channel, Message message) throws IOException {
+    public void process(Channel channel, Message message) throws IOException {
         String messageId = message.getMessageProperties().getMessageId();
         try {
             //检查消息是否重复消费
-            if (redisUtil.sismember("PoNumberReceived", message.getMessageProperties().getMessageId())) {
-                //消息重复拒绝消费
+            Long count = redisUtil.sadd("PoNumberReceived", message.getMessageProperties().getMessageId());
+            if (count == 0) {
                 log.info("MessageId {} 重复消费", messageId);
-                channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
-            } else {
-                redisUtil.sadd("PoNumberReceived", message.getMessageProperties().getMessageId());
+                return;
             }
             //将消息化为实体，并进行处理
             String msg = new String(message.getBody(), "UTF-8");

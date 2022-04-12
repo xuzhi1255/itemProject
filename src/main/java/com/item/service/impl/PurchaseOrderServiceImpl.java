@@ -3,10 +3,9 @@ package com.item.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.item.bean.ItemInfo;
-import com.item.bean.ProductOrder;
+import com.item.bean.PurchaseOrder;
 import com.item.dao.InventoryTransactionMapper;
 import com.item.dao.ItemMapper;
 import com.item.dao.PoMasterMapper;
@@ -16,7 +15,7 @@ import com.item.model.InventoryTransaction;
 import com.item.model.PoMaster;
 import com.item.model.PoTransaction;
 import com.item.mq.MessageService;
-import com.item.service.ProductOrderService;
+import com.item.service.PurchaseOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -35,7 +33,7 @@ import java.util.List;
  **/
 @Service
 @Slf4j
-public class ProductOrderServiceImpl implements ProductOrderService {
+public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Autowired
     ItemMapper itemMapper;
@@ -59,40 +57,32 @@ public class ProductOrderServiceImpl implements ProductOrderService {
      **/
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public synchronized String receviePo(ProductOrder productOrder) throws Exception {
-        HashSet<String> set = new HashSet<>();
-        StringBuilder stringBuilder = new StringBuilder();
+    public synchronized void receviePo(PurchaseOrder purchaseOrder) throws Exception {
         //检查poNumber是否已经存在
-        int poCount = poMasterMapper.countByPoNumber(productOrder.getPoNumber());
+        int poCount = poMasterMapper.countByPoNumber(purchaseOrder.getPoNumber());
         if (poCount > 0) {
-            log.info("采购单订单号已经存在:{}", productOrder.getPoNumber());
+            log.info("采购单订单号已经存在:{}", purchaseOrder.getPoNumber());
             throw new Exception("采购单订单号已经在存在");
         }
         //入表PoMaster
-        PoMaster poMaster = createPoMasterModel(productOrder);
+        PoMaster poMaster = createPoMasterModel(purchaseOrder);
         poMasterMapper.insert(poMaster);
         //入表POTransaction
-        for (ItemInfo itemInfo : productOrder.getItemInfos()) {
+        for (ItemInfo itemInfo : purchaseOrder.getItemInfos()) {
             //查询itemNumber是否入库
             if (itemMapper.countByItemNumber(itemInfo.getItemNumber()) == 0) {
-                set.add(itemInfo.getItemNumber());
+                log.info("商品号码: {} 没有创建，无法进行采购单入库操作", itemInfo.getItemNumber());
+                throw new Exception(itemInfo.getItemNumber() + "信息没有找到，请先创建商品");
             } else {
-                PoTransaction poTransaction = createPoTransactionModel(itemInfo, productOrder.getPoNumber());
+                PoTransaction poTransaction = createPoTransactionModel(itemInfo, purchaseOrder.getPoNumber());
                 poTransactionMapper.insert(poTransaction);
             }
         }
 
         //创建异步消息发送至队列
-        PoReceiveMessage poReceiveMessage = createPoReceiveMessage(productOrder);
+        PoReceiveMessage poReceiveMessage = createPoReceiveMessage(purchaseOrder);
         messageService.sendMessage("PO_RECEIVE_QUEUE", buildMessage(poReceiveMessage));
 
-        //建立返回信息
-        if (set.isEmpty()) {
-            stringBuilder.append("采购单所有商品处理完成");
-        } else {
-            stringBuilder.append(StrUtil.join(",", set)).append("商品需要先进行入库操作，其他商品都已经完成");
-        }
-        return stringBuilder.toString();
     }
 
     /**
@@ -108,25 +98,24 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         InventoryTransaction inventoryTransactionModel = null;
         List<ItemInfo> itemInfoList = poReceiveMessage.getItemInfos();
         for (ItemInfo itemInfo : itemInfoList) {
-            if (itemMapper.countByItemNumber(itemInfo.getItemNumber()) > 0) {
-                InventoryTransaction inventoryTransactionRecord =
-                        inventoryTransactionMapper.selectOneByItemNumber(itemInfo.getItemNumber());
-                if (ObjectUtil.isNull(inventoryTransactionRecord)) {
-                    inventoryTransactionModel = createInventoryTransactionInsert(itemInfo, editUser);
-                    inventoryTransactionMapper.insert(inventoryTransactionModel);
-                } else {
-                    inventoryTransactionModel = createInventoryTransactionUpdate(itemInfo, editUser,
-                            inventoryTransactionRecord.getId());
-                    inventoryTransactionMapper.updateByPrimaryKeySelective(inventoryTransactionModel);
-                }
+            InventoryTransaction inventoryTransactionRecord =
+                    inventoryTransactionMapper.selectOneByItemNumber(itemInfo.getItemNumber());
+            if (ObjectUtil.isNull(inventoryTransactionRecord)) {
+                inventoryTransactionModel = createInventoryTransactionInsert(itemInfo, editUser);
+                inventoryTransactionMapper.insert(inventoryTransactionModel);
+            } else {
+                inventoryTransactionModel = createInventoryTransactionUpdate(itemInfo, editUser,
+                        inventoryTransactionRecord.getId());
+                inventoryTransactionMapper.updateByPrimaryKeySelective(inventoryTransactionModel);
             }
+
         }
     }
 
 
-    private PoMaster createPoMasterModel(ProductOrder productOrder) {
+    private PoMaster createPoMasterModel(PurchaseOrder purchaseOrder) {
         PoMaster poMaster = new PoMaster();
-        BeanUtil.copyProperties(productOrder, poMaster);
+        BeanUtil.copyProperties(purchaseOrder, poMaster);
         poMaster.setEditTime(DateUtil.date());
         return poMaster;
     }
@@ -140,9 +129,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         return poTransaction;
     }
 
-    private PoReceiveMessage createPoReceiveMessage(ProductOrder productOrder) {
+    private PoReceiveMessage createPoReceiveMessage(PurchaseOrder purchaseOrder) {
         PoReceiveMessage poReceiveMessage = new PoReceiveMessage();
-        BeanUtil.copyProperties(productOrder, poReceiveMessage);
+        BeanUtil.copyProperties(purchaseOrder, poReceiveMessage);
         return poReceiveMessage;
     }
 

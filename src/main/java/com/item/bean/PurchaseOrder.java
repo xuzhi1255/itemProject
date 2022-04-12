@@ -16,7 +16,7 @@ import java.util.List;
  * @Date : 2022/4/8 10:08
  */
 @Data
-public class ProductOrder {
+public class PurchaseOrder {
 
     // 采购单订单号
     @NotBlank(message = "采购单单号不能为空")

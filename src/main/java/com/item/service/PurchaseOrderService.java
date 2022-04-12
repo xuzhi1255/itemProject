@@ -1,6 +1,6 @@
 package com.item.service;
 
-import com.item.bean.ProductOrder;
+import com.item.bean.PurchaseOrder;
 import com.item.message.PoReceiveMessage;
 
 /**
@@ -9,14 +9,14 @@ import com.item.message.PoReceiveMessage;
  * @Date :2022/4/8 10:49
  **/
 
-public interface ProductOrderService {
+public interface PurchaseOrderService {
 
     /**
      * @Description : 接受采购单信息执行入库操作
      * @Author : Zhilin_Xu
      * @Date : 2022/4/8 10:52
      **/
-    String receviePo(ProductOrder productOrder) throws Exception;
+    void receviePo(PurchaseOrder purchaseOrder) throws Exception;
 
     /**
      * @Description :处理采购单回推信息
